@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <title>Diesel Logger</title>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+
+    body {
+      font-family: Arial;
+      background: #111;
+      color: white;
+      padding: 20px;
+      margin: 0;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    input,
+    button {
+
+      width: 100%;
+      box-sizing: border-box;
+
+      padding: 16px;
+      margin-bottom: 14px;
+
+      font-size: 18px;
+
+      border: none;
+      border-radius: 12px;
+    }
+
+    input {
+      background: #222;
+      color: white;
+    }
+
+    button {
+      background: #5865F2;
+      color: white;
+      font-weight: bold;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: #aaa;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<h1>Diesel Logger</h1>
+
+<label>Person</label>
+<input
+  id="person"
+  list="personList"
+  placeholder="Enter person's name"
+>
+
+<datalist id="personList"></datalist>
+
+<label>Vehicle</label>
+<input
+  id="vehicle"
+  list="vehicleList"
+  placeholder="Enter vehicle name"
+>
+
+<datalist id="vehicleList"></datalist>
+
+<label>Litres</label>
+<input
+  id="litres"
+  type="number"
+  placeholder="Enter litres"
+>
+
+<label>Date</label>
+<input
+  id="date"
+  type="date"
+>
+
+<button onclick="sendLog()">
+  Submit Log
+</button>
+
+<script>
+
+document.getElementById("date").value =
+  new Date().toISOString().split('T')[0];
+
+loadSavedData();
+
+function loadSavedData() {
+
+  const savedPeople =
+    JSON.parse(localStorage.getItem("people")) || [];
+
+  const savedVehicles =
+    JSON.parse(localStorage.getItem("vehicles")) || [];
+
+  const personList =
+    document.getElementById("personList");
+
+  const vehicleList =
+    document.getElementById("vehicleList");
+
+  savedPeople.forEach(person => {
+
+    const option =
+      document.createElement("option");
+
+    option.value = person;
+
+    personList.appendChild(option);
+  });
+
+  savedVehicles.forEach(vehicle => {
+
+    const option =
+      document.createElement("option");
+
+    option.value = vehicle;
+
+    vehicleList.appendChild(option);
+  });
+}
+
+function saveUniqueValue(key, value) {
+
+  let values =
+    JSON.parse(localStorage.getItem(key)) || [];
+
+  if (!values.includes(value)) {
+
+    values.push(value);
+
+    localStorage.setItem(
+      key,
+      JSON.stringify(values)
+    );
+  }
+}
+
+async function sendLog() {
+
+  const webhookURL =
+    "https://discord.com/api/webhooks/1505518561357987910/_3csgdyj1KiL2Luwqa59359XUpkNIbL1ug4o1rN9Ao4d0LAro0SnvKI1BOtNHN_b2edF";
+
+  const person =
+    document.getElementById("person").value.trim();
+
+  const vehicle =
+    document.getElementById("vehicle").value.trim();
+
+  const litres =
+    document.getElementById("litres").value;
+
+  const rawDate =
+    document.getElementById("date").value;
+
+  if (!person || !vehicle || !litres || !rawDate) {
+
+    alert("Please complete all fields");
+
+    return;
+  }
+
+  saveUniqueValue("people", person);
+
+  saveUniqueValue("vehicles", vehicle);
+
+  const parts = rawDate.split("-");
+
+  const formattedDate =
+    `${parts[2]}/${parts[1]}/${parts[0]}`;
+
+  const message = {
+
+    content:
+`Person: ${person}
+Vehicle: ${vehicle}
+Litres: ${litres}L
+Date: ${formattedDate}`
+  };
+
+  try {
+
+    await fetch(webhookURL, {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify(message)
+    });
+
+    alert("Diesel log submitted!");
+
+    location.reload();
+
+  } catch (error) {
+
+    alert("Error sending log");
+  }
+}
+
+</script>
+
+</body>
+</html>
