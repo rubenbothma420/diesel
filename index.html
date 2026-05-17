@@ -1,0 +1,59 @@
+	<!DOCTYPE html>
+<html>
+<head>
+  <title>Discord Test</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #111;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    button {
+      padding: 20px 40px;
+      font-size: 20px;
+      border: none;
+      border-radius: 12px;
+      background: #5865F2;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+
+<button onclick="sendMessage()">
+  Send Hello
+</button>
+
+<script>
+async function sendMessage() {
+
+  const webhookURL = "https://discord.com/api/webhooks/1505170969080365237/1GNK4zb3QfZL1_1AULrd4-s8cxRxo9YYDb-ux_l8CZH6dGxRIyoX-gBKP2bQXxAls_63";
+
+  const data = {
+    content: "Hello from my iPhone web app 🚀"
+  };
+
+  await fetch(webhookURL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+  });
+
+  alert("Message sent!");
+}
+</script>
+
+</body>
+</html>
