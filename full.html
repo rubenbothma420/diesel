@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Diesel Logger</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+
+    body {
+      font-family: Arial;
+      background: #111;
+      color: white;
+      padding: 20px;
+      margin: 0;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    input,
+    button {
+
+      width: 100%;
+      box-sizing: border-box;
+
+      padding: 18px;
+      margin-bottom: 15px;
+
+      font-size: 18px;
+
+      border: none;
+      border-radius: 12px;
+    }
+
+    input {
+      background: #222;
+      color: white;
+    }
+
+    button {
+      background: #5865F2;
+      color: white;
+      font-weight: bold;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 15px;
+      color: #aaa;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<h1>⛽ Diesel Logger</h1>
+
+<label>Person</label>
+<input
+  id="person"
+  placeholder="Enter person's name"
+>
+
+<label>Vehicle</label>
+<input
+  id="vehicle"
+  placeholder="Enter vehicle name"
+>
+
+<label>Litres</label>
+<input
+  id="litres"
+  type="number"
+  placeholder="Enter litres"
+>
+
+<label>Date</label>
+<input
+  id="date"
+  type="date"
+>
+
+<button onclick="sendLog()">
+  Submit Log
+</button>
+
+<script>
+
+async function sendLog() {
+
+  const webhookURL = "https://discord.com/api/webhooks/1505170969080365237/1GNK4zb3QfZL1_1AULrd4-s8cxRxo9YYDb-ux_l8CZH6dGxRIyoX-gBKP2bQXxAls_63";
+
+  const person =
+    document.getElementById("person").value;
+
+  const vehicle =
+    document.getElementById("vehicle").value;
+
+  const litres =
+    document.getElementById("litres").value;
+
+  const date =
+    document.getElementById("date").value;
+
+  if (!person || !vehicle || !litres || !date) {
+
+    alert("Please complete all fields");
+
+    return;
+  }
+
+  const message = {
+
+    content:
+`⛽ DIESEL LOG
+
+👷 Person: ${person}
+
+🚜 Vehicle: ${vehicle}
+
+⛽ Litres: ${litres}L
+
+📅 Date: ${date}`
+  };
+
+  try {
+
+    await fetch(webhookURL, {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify(message)
+    });
+
+    alert("Diesel log submitted!");
+
+    document.getElementById("person").value = "";
+    document.getElementById("vehicle").value = "";
+    document.getElementById("litres").value = "";
+
+  } catch (error) {
+
+    alert("Error sending log");
+  }
+}
+
+</script>
+
+</body>
+</html>
