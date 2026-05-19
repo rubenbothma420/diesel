@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <title>Fuel & Oil</title>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+
+    body {
+      font-family: Arial;
+      background: #111;
+      color: white;
+      padding: 20px;
+      margin: 0;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    select,
+    input,
+    button {
+
+      width: 100%;
+      box-sizing: border-box;
+
+      padding: 16px;
+      margin-bottom: 14px;
+
+      font-size: 18px;
+
+      border: none;
+      border-radius: 12px;
+    }
+
+    select,
+    input {
+      background: #222;
+      color: white;
+    }
+
+    button {
+      background: #5865F2;
+      color: white;
+      font-weight: bold;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: #aaa;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<h1>Fuel & Oil</h1>
+
+<label>Category</label>
+<select id="category" onchange="updateVehicles()">
+  <option>Diesel</option>
+  <option>Petrol</option>
+  <option>Engine Oil</option>
+  <option>Hydraulic Oil</option>
+</select>
+
+<label>Name</label>
+<select id="personSelect" onchange="handlePersonSelect()">
+  <option value="">Select Name</option>
+  <option>Donovan</option>
+  <option>Oom Solly</option>
+  <option>Young Solly</option>
+  <option value="custom">Other...</option>
+</select>
+
+<input
+  id="customPerson"
+  placeholder="Enter custom name"
+  style="display:none;"
+>
+
+<label>Vehicle / Equipment</label>
+<select id="vehicleSelect" onchange="handleVehicleSelect()">
+</select>
+
+<input
+  id="customVehicle"
+  placeholder="Enter custom vehicle"
+  style="display:none;"
+>
+
+<label>Amount</label>
+<input
+  id="amount"
+  type="number"
+  placeholder="Enter amount"
+>
+
+<label>Date</label>
+<input
+  id="date"
+  type="date"
+>
+
+<button onclick="sendLog()">
+  Submit Log
+</button>
+
+<script>
+
+const webhooks = {
+
+  "Diesel":
+  "https://discord.com/api/webhooks/1505638642008330531/DQyxnm91SbmPuIfY6lOiH7ensEBuDHNXE-BBukvxtDP9x9Hsk__JOfhbfGXT0i0V-7S-",
+
+  "Petrol":
+  "https://discord.com/api/webhooks/1505639079147208804/0h0oWU8bBzksoVO73gKroc6EGjOS9xxJpMWAySxpooeehXJ8SMr5mox_CbHkS8vs2Q3R",
+
+  "Engine Oil":
+  "https://discord.com/api/webhooks/1505639506341265490/GTl6YSP1jOOgLwKDINS0At4wHrVP-Q5t06bBoqnHhdHoOfzLCXmijmDMt80WGB7MKluX",
+
+  "Hydraulic Oil":
+  "https://discord.com/api/webhooks/1505639890015096954/jQOVwTExuz1IdlMKIQAJuZNVQC-qC6ft9fKqTxkK8QDBe7KAJMiXLCHWO_PnHZrlmYXr"
+};
+
+const dieselVehicles = [
+  "Hilux",
+  "New Holland",
+  "Ford",
+  "Massey Ferguson",
+  "Isuzu"
+];
+
+const petrolVehicles = [
+  "Generator",
+  "2-stroke"
+];
+
+document.getElementById("date").value =
+  new Date().toISOString().split('T')[0];
+
+updateVehicles();
+
+function handlePersonSelect() {
+
+  const selection =
+    document.getElementById("personSelect").value;
+
+  const customInput =
+    document.getElementById("customPerson");
+
+  if (selection === "custom") {
+
+    customInput.style.display = "block";
+
+  } else {
+
+    customInput.style.display = "none";
+  }
+}
+
+function handleVehicleSelect() {
+
+  const selection =
+    document.getElementById("vehicleSelect").value;
+
+  const customInput =
+    document.getElementById("customVehicle");
+
+  if (selection === "custom") {
+
+    customInput.style.display = "block";
+
+  } else {
+
+    customInput.style.display = "none";
+  }
+}
+
+function updateVehicles() {
+
+  const category =
+    document.getElementById("category").value;
+
+  const vehicleSelect =
+    document.getElementById("vehicleSelect");
+
+  vehicleSelect.innerHTML = "";
+
+  let vehicles = [];
+
+  if (
+    category === "Diesel" ||
+    category === "Engine Oil" ||
+    category === "Hydraulic Oil"
+  ) {
+
+    vehicles = dieselVehicles;
+
+  } else {
+
+    vehicles = petrolVehicles;
+  }
+
+  const defaultOption =
+    document.createElement("option");
+
+  defaultOption.value = "";
+  defaultOption.text = "Select Vehicle";
+
+  vehicleSelect.appendChild(defaultOption);
+
+  vehicles.forEach(vehicle => {
+
+    const option =
+      document.createElement("option");
+
+    option.value = vehicle;
+    option.text = vehicle;
+
+    vehicleSelect.appendChild(option);
+  });
+
+  const customOption =
+    document.createElement("option");
+
+  customOption.value = "custom";
+  customOption.text = "Other...";
+
+  vehicleSelect.appendChild(customOption);
+}
+
+async function sendLog() {
+
+  const category =
+    document.getElementById("category").value;
+
+  const webhookURL =
+    webhooks[category];
+
+  let person =
+    document.getElementById("personSelect").value;
+
+  if (person === "custom") {
+
+    person =
+      document.getElementById("customPerson").value.trim();
+  }
+
+  let vehicle =
+    document.getElementById("vehicleSelect").value;
+
+  if (vehicle === "custom") {
+
+    vehicle =
+      document.getElementById("customVehicle").value.trim();
+  }
+
+  const amount =
+    document.getElementById("amount").value;
+
+  const rawDate =
+    document.getElementById("date").value;
+
+  if (!person || !vehicle || !amount || !rawDate) {
+
+    alert("Please complete all fields");
+
+    return;
+  }
+
+  const parts =
+    rawDate.split("-");
+
+  const formattedDate =
+    `${parts[2]}/${parts[1]}/${parts[0]}`;
+
+  const discordMessage = {
+
+    content:
+`${person}
+${vehicle}
+${amount}L
+${formattedDate}`
+  };
+
+  const sheetData = {
+
+    category: category,
+    person: person,
+    vehicle: vehicle,
+    amount: amount,
+    date: formattedDate
+  };
+
+  try {
+
+    // Discord
+
+    await fetch(webhookURL, {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify(discordMessage)
+    });
+
+    // Google Sheets
+
+    await fetch(
+      "https://script.google.com/macros/s/AKfycbxUZKS49nJ7nCE5fBpg9g0-u8kfdHnmDR6AFvgg7xj2umwuFf1TEz40acEfP1K-3_WL/exec",
+      {
+
+        method: "POST",
+
+        mode: "no-cors",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify(sheetData)
+      }
+    );
+
+    alert("Log submitted!");
+
+    document.getElementById("amount").value = "";
+
+  } catch (error) {
+
+    alert("Error sending log");
+  }
+}
+
+</script>
+
+</body>
+</html>
